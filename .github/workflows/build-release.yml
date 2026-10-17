@@ -1,9 +1,12 @@
-name: Build & continuous release (Linux)
+name: Build & continuous release (CachyOS pkg + AppImage)
 
 # Builds two flavours of MAME and publishes each as a rolling ("continuous")
 # GitHub release that is replaced on every successful run:
 #   - continuous-full    -> full MAME     (SUBTARGET=mame,   binary: mame)
 #   - continuous-arcade  -> arcade only   (SUBTARGET=arcade, binary: mamearcade)
+# Each release ships:
+#   - a CachyOS/Arch package (.pkg.tar.zst) optimized for AMD Zen 3 (-march=znver3)
+#   - a generic x86-64 AppImage
 # The arcade driver set is defined in src/mame/arcade.flt.
 
 on:
@@ -11,6 +14,7 @@ on:
     branches: [master]
     paths:
     - '.github/workflows/build-release.yml'
+    - '.github/scripts/build-in-arch.sh'
     - '3rdparty/**'
     - 'scripts/**'
     - 'src/**'
@@ -24,26 +28,21 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ matrix.name }}
+    name: ${{ matrix.flavor }} / ${{ matrix.variant }}
     runs-on: ubuntu-latest
     timeout-minutes: 360
-    concurrency:
-      group: release-${{ matrix.tag }}
-      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
+        flavor: [full, arcade]
+        variant: [znver3, generic]   # znver3 -> .pkg.tar.zst, generic -> AppImage
         include:
-          - name: full
+          - flavor: full
             subtarget: mame
             executable: mame
-            tag: continuous-full
-            title: "MAME continuous - full (Linux x86_64)"
-          - name: arcade
+          - flavor: arcade
             subtarget: arcade
             executable: mamearcade
-            tag: continuous-arcade
-            title: "MAME continuous - arcade only (Linux x86_64)"
     steps:
     - uses: actions/checkout@v4
       with:
@@ -54,59 +53,60 @@ jobs:
         sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
         df -h /
 
-    - name: Install dependencies
+    - name: Build and package in an Arch Linux container
       run: |
-        sudo apt-get update
-        sudo apt-get install -y libsdl2-dev libsdl2-ttf-dev libfontconfig-dev \
-          libasound2-dev libxinerama-dev libxi-dev libpulse-dev zstd xz-utils
-
-    - name: Build ${{ matrix.executable }}
-      env:
-        SUBTARGET: ${{ matrix.subtarget }}
-        ARCHOPTS: -U_FORTIFY_SOURCE
-        TOOLS: 1
-        NOWERROR: 1
-        PRECOMPILE: 0
-      run: make -j"$(nproc)"
-
-    - name: Smoke test
-      run: ./${{ matrix.executable }} -version
-
-    - name: Package
-      id: pkg
-      run: |
-        set -e
-        exe='${{ matrix.executable }}'
-        name="${exe}-linux-x86_64-$(date -u +%Y%m%d)-${GITHUB_SHA::8}"
-        mkdir -p "dist/$name"
-        strip "$exe" chdman romcmp unidasm 2>/dev/null || true
-        cp "$exe" chdman romcmp unidasm "dist/$name/" 2>/dev/null || cp "$exe" "dist/$name/"
-        cp -r hash ini plugins language keymaps ctrlr artwork bgfx hlsl samples uismall.bdf COPYING "dist/$name/" 2>/dev/null || true
-        cd dist
-        XZ_OPT='-T0 -6' tar -cJf "$name.tar.xz" "$name"
-        sha256sum "$name.tar.xz" > "$name.tar.xz.sha256"
-        ls -lh
-        echo "file=dist/$name.tar.xz" >> "$GITHUB_OUTPUT"
-        echo "name=$name" >> "$GITHUB_OUTPUT"
+        docker run --rm \
+          -e GITHUB_SHA \
+          -v "$PWD:/src" \
+          archlinux:latest \
+          /src/.github/scripts/build-in-arch.sh \
+            '${{ matrix.subtarget }}' '${{ matrix.executable }}' '${{ matrix.variant }}' "$(id -u):$(id -g)"
 
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.pkg.outputs.name }}
-        path: dist/*.tar.xz*
+        name: dist-${{ matrix.flavor }}-${{ matrix.variant }}
+        path: dist/*
         if-no-files-found: error
         retention-days: 7
 
-    - name: Publish continuous release
+  release:
+    name: Publish continuous-${{ matrix.flavor }}
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-${{ matrix.flavor }}
+      cancel-in-progress: false
+    strategy:
+      matrix:
+        flavor: [full, arcade]
+        include:
+          - flavor: full
+            title: "MAME continuous - full"
+            executable: mame
+          - flavor: arcade
+            title: "MAME continuous - arcade only"
+            executable: mamearcade
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: dist-${{ matrix.flavor }}-*
+        path: dist
+        merge-multiple: true
+
+    - name: Publish release
       env:
         GH_TOKEN: ${{ github.token }}
-        TAG: ${{ matrix.tag }}
+        REPO: ${{ github.repository }}
+        TAG: continuous-${{ matrix.flavor }}
         TITLE: ${{ matrix.title }}
       run: |
         set -e
-        notes=$(printf '%s\n\n%s\n%s' \
+        ls -lh dist
+        notes=$(printf '%s\n\n%s\n%s\n%s' \
           "Automated rolling build of commit ${GITHUB_SHA} ($(date -u '+%Y-%m-%d %H:%M UTC'))." \
           "Replaced on every successful run of this workflow." \
-          "Requires SDL2 at runtime. Extract the archive and run ./${{ matrix.executable }}.")
-        gh release delete "$TAG" --cleanup-tag --yes || true
-        gh release create "$TAG" dist/*.tar.xz dist/*.sha256 \
+          "- ${{ matrix.executable }}-znver3-*.pkg.tar.zst: CachyOS/Arch package, optimized for AMD Zen 3 (-march=znver3). Install with: sudo pacman -U <file>" \
+          "- ${{ matrix.executable }}-*.AppImage: generic x86-64 AppImage. Run with: chmod +x <file> && ./<file>")
+        gh release delete "$TAG" --repo "$REPO" --cleanup-tag --yes || true
+        gh release create "$TAG" dist/* --repo "$REPO" \
           --target "$GITHUB_SHA" --title "$TITLE" --notes "$notes" --latest=false
