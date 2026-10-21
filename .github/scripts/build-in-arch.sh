@@ -16,7 +16,21 @@ if [ "$VARIANT" = znver3 ]; then
   ARCHOPTS="-march=znver3 -mtune=znver3 $ARCHOPTS"
 fi
 
-make -j"$(nproc)" SUBTARGET="$SUBTARGET" TOOLS=1 NOWERROR=1 ARCHOPTS="$ARCHOPTS"
+mkdir -p dist
+set +e
+make -j"$(nproc)" SUBTARGET="$SUBTARGET" TOOLS=1 NOWERROR=1 ARCHOPTS="$ARCHOPTS" 2>&1 | tee build.log
+rc=${PIPESTATUS[0]}
+set -e
+if [ "$rc" -ne 0 ]; then
+  # Surface the first real errors as workflow annotations (job logs may not be downloadable)
+  echo "make failed with exit code $rc, first errors:"
+  grep -nE "error:|Error [0-9]+|\*\*\* |undefined reference|No such file|fatal" build.log | head -8 | while IFS= read -r l; do
+    echo "::error::$(printf '%s' "$l" | cut -c1-400)"
+  done
+  tail -n 15 build.log | while IFS= read -r l; do echo "::warning::$(printf '%s' "$l" | cut -c1-300)"; done
+  tail -n 400 build.log > "dist/build-failure-tail.log"; chown -R "$OWNER" dist build.log
+  exit "$rc"
+fi
 ./"$EXE" -version
 
 VER=$(./"$EXE" -version | awk '{print $1}' | tr -c 'A-Za-z0-9._\n' '_')

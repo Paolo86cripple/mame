@@ -63,6 +63,7 @@ jobs:
             '${{ matrix.subtarget }}' '${{ matrix.executable }}' '${{ matrix.variant }}' "$(id -u):$(id -g)"
 
     - uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: dist-${{ matrix.flavor }}-${{ matrix.variant }}
         path: dist/*
