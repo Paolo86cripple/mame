@@ -121,11 +121,12 @@ private:
 	void mcu_p3_w(uint8_t data);
 
 	void switch_game_select_w(uint8_t data);
-	void switch_sound_ctrl_w(uint8_t data);
+	void switch_overlay_color_mute_w(uint8_t data);
 
 	void mk3_controller_w(uint8_t data);
 	void mk3_controller_aux_w(uint8_t data);
 	void mk3_sound_ctrl_w(uint8_t data);
+	void mk3_overlay_color_w(uint8_t data);
 
 	void vram_address_high_w(uint8_t data);
 	void vram_address_low_w(uint8_t data);
@@ -154,11 +155,13 @@ private:
 	uint8_t m_selected_slot = 0;
 
 	uint8_t m_p1 = 0xff;
+	uint8_t m_p3 = 0xff;
 	uint8_t m_mk3_controller = 0xff;
 	uint8_t m_mk3_controller_aux = 0xff;
 
 	bool m_overlay_start = false;
 	uint8_t m_overlay_y = 0;
+	rgb_t m_overlay_color = rgb_t::white();
 
 	memory_passthrough_handler m_snes_address_tap[4];
 	bool m_snes_address_tap_active[4]{};
@@ -200,6 +203,7 @@ void snesb51_state::mk3_io_map(address_map &map)
 	map(0x8e00, 0x8e00).w(FUNC(snesb51_state::vram_address_low_w));
 	map(0x9000, 0x9000).w(FUNC(snesb51_state::mk3_controller_w));
 	map(0xa000, 0xa000).w(FUNC(snesb51_state::vram_w));
+	map(0xb000, 0xb000).w(FUNC(snesb51_state::mk3_overlay_color_w));
 	map(0xc000, 0xc000).r(FUNC(snesb51_state::snes_bus_watch_ack_r<2>));
 	map(0xd000, 0xd000).r(FUNC(snesb51_state::snes_bus_watch_ack_r<3>));
 	map(0xd200, 0xd200).portr("DSW1");
@@ -224,7 +228,7 @@ void snesb51_state::switcher_io_map(address_map &map)
 	map(0xd000, 0xd000).w(FUNC(snesb51_state::rom_address_low_w));
 	map(0xd400, 0xd400).w(FUNC(snesb51_state::rom_address_high_w));
 	map(0xd800, 0xd800).r(FUNC(snesb51_state::rom_r));
-	map(0xb000, 0xb000).w(FUNC(snesb51_state::switch_sound_ctrl_w)); // only on the 1994 variants?
+	map(0xb000, 0xb000).w(FUNC(snesb51_state::switch_overlay_color_mute_w));
 	map(0xe000, 0xe000).w(FUNC(snesb51_state::snes_bus_watch_w<1>));
 }
 
@@ -413,9 +417,22 @@ static INPUT_PORTS_START( snes4sl94 )
 	PORT_DIPSETTING(   0x01, "5 Minutes")
 INPUT_PORTS_END
 
+
 //**************************************************************************
 //  VIDEO EMULATION
 //**************************************************************************
+
+void snesb51_state::mk3_overlay_color_w(uint8_t data)
+{
+	// 765432--  overlay color, format rrbbgg
+	// ------10  unknown
+
+	const int r = BIT(data, 6, 2);
+	const int b = BIT(data, 4, 2);
+	const int g = BIT(data, 2, 2);
+
+	m_overlay_color = rgb_t(r * 0x55, g * 0x55, b * 0x55);
+}
 
 void snesb51_state::hblank_w(int state)
 {
@@ -424,21 +441,29 @@ void snesb51_state::hblank_w(int state)
 
 uint32_t snesb51_state::overlay_update(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect)
 {
+//	bitmap.fill(0, cliprect);
+
 	if (m_overlay_start)
 	{
 		m_overlay_y = (m_vram_address & 0xff) + 1;
 		m_overlay_start = false;
 	}
 
-	bitmap.fill(rgb_t::black(), cliprect);
-
-	if (!BIT(m_p1, 7))
+	for (int y = cliprect.min_y; y <= cliprect.max_y; y++)
 	{
-		for (int y = cliprect.min_y; y <= cliprect.max_y; y++)
-		{
-			for (int x = cliprect.min_x; x <= cliprect.max_x; x++)
-				bitmap.pix(y, x) = BIT(m_vram[((x >> 3) << 8) | m_overlay_y], 7 - (x & 7)) ? rgb_t::white() : rgb_t::black();
+		m_ppu->refresh_scanline(bitmap, y, y);
 
+		if (!BIT(m_p1, 7))
+		{
+			for (int x = cliprect.min_x; x <= cliprect.max_x; x+=2)
+			{
+				u8 dot = BIT(m_vram[((x >> 4) << 8) | m_overlay_y], 7 - ((x >> 1) & 7));
+				if (dot)
+				{
+					bitmap.pix(y, x + 0) = m_overlay_color;
+					bitmap.pix(y, x + 1) = m_overlay_color;
+				}
+			}
 			m_overlay_y++;
 		}
 	}
@@ -462,10 +487,16 @@ void snesb51_state::mk3_sound_ctrl_w(uint8_t data)
 	m_speaker->set_input_gain(1, gain);
 }
 
-void snesb51_state::switch_sound_ctrl_w(uint8_t data)
+void snesb51_state::switch_overlay_color_mute_w(uint8_t data)
 {
-	// 7654321-  unknown
+	// 765432--  overlay color, format bbggrr
+	// ------1-  unknown
 	// -------0  audio mute (audio is unmuted after inserting a coin)
+
+	const int b = BIT(data, 6, 2);
+	const int g = BIT(data, 4, 2);
+	const int r = BIT(data, 2, 2);
+	m_overlay_color = rgb_t(r * 0x55, g * 0x55, b * 0x55);
 
 	const float gain = BIT(data, 0) ? 1.0f : 0.0f;
 	m_speaker->set_input_gain(0, gain);
@@ -561,7 +592,12 @@ void snesb51_state::mcu_p3_w(uint8_t data)
 	m_maincpu->set_input_line(INPUT_LINE_RESET, BIT(data, 3) ? ASSERT_LINE : CLEAR_LINE);
 	m_soundcpu->set_input_line(INPUT_LINE_RESET, BIT(data, 3) ? ASSERT_LINE : CLEAR_LINE);
 
+	if (BIT(m_p3, 3) == 1 && BIT(data, 3) == 0)
+		m_ppu->reset();
+
 	m_mcu_speaker->level_w(data & 0x03);
+
+	m_p3 = data;
 }
 
 void snesb51_state::switch_game_select_w(uint8_t data)
@@ -681,10 +717,12 @@ void snesb51_state::machine_start()
 	save_item(NAME(m_rom_address));
 	save_item(NAME(m_selected_slot));
 	save_item(NAME(m_p1));
+	save_item(NAME(m_p3));
 	save_item(NAME(m_mk3_controller));
 	save_item(NAME(m_mk3_controller_aux));
 	save_item(NAME(m_overlay_start));
 	save_item(NAME(m_overlay_y));
+	save_item(NAME(m_overlay_color));
 	save_item(NAME(m_snes_address_tap_active));
 	save_item(NAME(m_snes_address_offset));
 	save_item(NAME(m_snes_address_offset_latch));
@@ -696,6 +734,7 @@ void snesb51_state::machine_reset()
 	snes_state::machine_reset();
 
 	m_p1 = 0xff;
+	m_p3 = 0xff;
 	m_mk3_controller = 0xff;
 	m_mk3_controller_aux = 0xff;
 
@@ -750,15 +789,10 @@ void snesb51_state::base(machine_config &config)
 	// video hardware
 	SCREEN(config, m_screen);
 	m_screen->set_raw(DOTCLK_NTSC * 2, SNES_HTOTAL * 2, 0, SNES_SCR_WIDTH * 2, SNES_VTOTAL_NTSC, 0, SNES_SCR_HEIGHT_NTSC);
-	m_screen->set_video_attributes(VIDEO_VARIABLE_WIDTH);
-	m_screen->set_screen_update(FUNC(snes_state::screen_update));
+	// TODO: can't use VIDEO_VARIABLE_WIDTH with an overlay
+	m_screen->set_video_attributes(VIDEO_UPDATE_SCANLINE);
+	m_screen->set_screen_update(FUNC(snesb51_state::overlay_update));
 	m_screen->screen_vblank().set_inputline(m_mcu, MCS51_INT0_LINE);
-
-	// temporary until the screen is actually overlayed
-	screen_device &overlay(SCREEN(config, "overlay"));
-	overlay.set_raw(DOTCLK_NTSC * 2, SNES_HTOTAL * 2, 0, 256, SNES_VTOTAL_NTSC, 0, 256);
-	overlay.set_video_attributes(VIDEO_UPDATE_SCANLINE);
-	overlay.set_screen_update(FUNC(snesb51_state::overlay_update));
 
 	SNES_PPU(config, m_ppu, MCLK_NTSC);
 	m_ppu->open_bus_callback().set([this] { return snes_open_bus_r(); });

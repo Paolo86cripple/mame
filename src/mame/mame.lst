@@ -34702,6 +34702,7 @@ valkyrie
 @source:namco/namcos10.cpp
 ballpom
 chocovdr
+dicerom
 g13jnr
 gahaha
 gahaha2
@@ -34923,6 +34924,7 @@ finfurl
 finfurl2
 finfurl2j
 gunwars
+gunwarsj
 gunwarsa
 motoxgo
 motoxgov1a
@@ -36284,6 +36286,7 @@ fatfurspb
 kinstsnes
 mk3snes
 snes4sl
+snes4sl94
 snes4sln
 
 @source:nintendo/spacefb.cpp
@@ -37476,6 +37479,9 @@ ecssi5pi
 @source:pc/champ2.cpp
 champ2
 
+@source:pc/cmltgame.cpp
+cmltgame
+
 @source:pc/compc.cpp
 compc10
 pc10iii
@@ -37543,6 +37549,9 @@ megapcpl
 
 @source:pc/nforcepc.cpp
 nforcepc
+
+@source:pc/octavian_g650.cpp
+sweetstr
 
 @source:pc/pangofun.cpp
 pangofun
@@ -40813,6 +40822,9 @@ lucky168
 pljh
 wakenz80
 
+@source:sealy/sealy_z80_8bpp.cpp
+clonekng
+
 @source:seequa/chameleon.cpp
 chameleon
 champroto
@@ -42376,7 +42388,6 @@ omv1000
 omv2000
 sc3000
 sc3000pal
-sf7000
 sg1000
 sg1000m2
 
