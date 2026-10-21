@@ -1451,7 +1451,6 @@ skeleton/minihock.cpp
 skeleton/paipaile.cpp
 skeleton/palsystems_sh2.cpp
 skeleton/probowl.cpp
-skeleton/ramstar.cpp
 skeleton/sammy_pachislo_z80.cpp
 skeleton/seoul88.cpp
 skeleton/sgm.cpp

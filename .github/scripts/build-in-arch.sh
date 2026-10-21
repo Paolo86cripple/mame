@@ -7,6 +7,7 @@ set -euo pipefail
 
 SUBTARGET=$1 EXE=$2 VARIANT=$3 OWNER=$4
 cd /src
+git config --global --add safe.directory /src
 
 pacman -Syu --noconfirm --needed base-devel git python sdl2 sdl2_ttf fontconfig \
   alsa-lib libpulse libxinerama libxi zstd file wget desktop-file-utils patchelf >/dev/null
@@ -18,7 +19,7 @@ fi
 
 mkdir -p dist
 set +e
-make -j"$(nproc)" SUBTARGET="$SUBTARGET" TOOLS=1 NOWERROR=1 ARCHOPTS="$ARCHOPTS" 2>&1 | tee build.log
+make -j"$(nproc)" SUBTARGET="$SUBTARGET" TOOLS=1 NOWERROR=1 USE_QTDEBUG=0 ARCHOPTS="$ARCHOPTS" 2>&1 | tee build.log
 rc=${PIPESTATUS[0]}
 set -e
 if [ "$rc" -ne 0 ]; then
