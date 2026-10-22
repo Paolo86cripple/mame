@@ -1769,3 +1769,6 @@ zaccaria/quasar.cpp
 zaccaria/seabattl.cpp
 zaccaria/zac1b1120.cpp
 zaccaria/zaccaria.cpp
+
+// Support sources not discoverable by the dependency scan (no driver, name differs from header)
+cave/cv1k_v_blit*.cpp

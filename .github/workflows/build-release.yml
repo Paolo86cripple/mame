@@ -78,10 +78,9 @@ jobs:
   release:
     name: Publish continuous-${{ matrix.flavor }}
     needs: build
+    # publish each flavour even if the other one failed (but not when cancelled)
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    concurrency:
-      group: release-${{ matrix.flavor }}
-      cancel-in-progress: false
     strategy:
       matrix:
         flavor: [full, arcade]
@@ -94,6 +93,7 @@ jobs:
             executable: mamearcade
     steps:
     - uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         pattern: dist-${{ matrix.flavor }}-*
         path: dist
@@ -107,7 +107,12 @@ jobs:
         TITLE: ${{ matrix.title }}
       run: |
         set -e
-        ls -lh dist
+        ls -lh dist || true
+        # only publish when both the package and the AppImage were built
+        if ! ls dist/*.pkg.tar.zst >/dev/null 2>&1 || ! ls dist/*.AppImage >/dev/null 2>&1; then
+          echo "::warning::${{ matrix.flavor }}: build incomplete, keeping the previous release"
+          exit 0
+        fi
         notes=$(printf '%s\n\n%s\n%s\n%s' \
           "Automated rolling build of commit ${GITHUB_SHA} ($(date -u '+%Y-%m-%d %H:%M UTC'))." \
           "Replaced on every successful run of this workflow." \
