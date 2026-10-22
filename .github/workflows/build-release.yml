@@ -26,6 +26,11 @@ on:
 permissions:
   contents: write
 
+# Only one run at a time: a new run cancels the one still in progress.
+concurrency:
+  group: build-release-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: ${{ matrix.flavor }} / ${{ matrix.variant }}
