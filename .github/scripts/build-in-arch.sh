@@ -7,10 +7,10 @@ set -euo pipefail
 
 SUBTARGET=$1 EXE=$2 VARIANT=$3 OWNER=$4
 cd /src
-git config --global --add safe.directory /src
 
 pacman -Syu --noconfirm --needed base-devel git python sdl2 sdl2_ttf fontconfig \
   alsa-lib libpulse libxinerama libxi zstd file wget desktop-file-utils patchelf >/dev/null
+git config --global --add safe.directory /src
 
 ARCHOPTS='-U_FORTIFY_SOURCE'
 if [ "$VARIANT" = znver3 ]; then
