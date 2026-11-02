@@ -1,7 +1,7 @@
 #!/bin/bash
 # Runs inside an archlinux container with the repository mounted at /src.
-# Usage: build-in-arch.sh <subtarget> <executable> <variant: znver3|generic> <host-uid:gid>
-#   znver3  -> -march=znver3 build, packaged as a CachyOS/Arch .pkg.tar.zst
+# Usage: build-in-arch.sh <subtarget> <executable> <variant: znver4|generic> <host-uid:gid>
+#   znver4  -> -march=znver4 build, packaged as a CachyOS/Arch .pkg.tar.zst
 #   generic -> baseline x86-64 build, packaged as an AppImage
 set -euo pipefail
 
@@ -13,8 +13,8 @@ pacman -Syu --noconfirm --needed base-devel git python sdl2 sdl2_ttf fontconfig 
 git config --global --add safe.directory /src
 
 ARCHOPTS='-U_FORTIFY_SOURCE'
-if [ "$VARIANT" = znver3 ]; then
-  ARCHOPTS="-march=znver3 -mtune=znver3 $ARCHOPTS"
+if [ "$VARIANT" = znver4 ]; then
+  ARCHOPTS="-march=znver4 -mtune=znver4 $ARCHOPTS"
 fi
 
 mkdir -p dist
@@ -51,7 +51,7 @@ stage_tree() {
 OPTS='-inipath "$HOME/.mame;$D/ini" -hashpath "$D/hash" -pluginspath "$D/plugins" -languagepath "$D/language" -artpath "$HOME/.mame/artwork;$D/artwork" -ctrlrpath "$D/ctrlr" -bgfx_path "$D/bgfx" -samplepath "$HOME/.mame/samples;$D/samples"'
 
 mkdir -p dist
-if [ "$VARIANT" = znver3 ]; then
+if [ "$VARIANT" = znver4 ]; then
   # ---------- CachyOS / Arch package ----------
   ROOT=$PWD/pkgwork/stage
   rm -rf pkgwork && mkdir -p "$ROOT"
@@ -65,10 +65,10 @@ WRAP
   PROVIDES=$EXE; [ "$EXE" = mame ] && PROVIDES=mame
   DESC="MAME full"; [ "$SUBTARGET" = arcade ] && DESC="MAME arcade-only"
   cat > pkgwork/PKGBUILD <<PKG
-pkgname=$EXE-znver3
+pkgname=$EXE-znver4
 pkgver=$VER.$DATE
 pkgrel=1
-pkgdesc="$DESC build optimized for AMD Zen 3 (-march=znver3), commit $SHORT"
+pkgdesc="$DESC build optimized for AMD Zen 4 (-march=znver4), commit $SHORT"
 arch=(x86_64)
 url=https://github.com/Paolo86cripple/mame
 license=(GPL-2.0-or-later BSD-3-Clause)

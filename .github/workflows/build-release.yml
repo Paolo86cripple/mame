@@ -5,7 +5,7 @@ name: Build & continuous release (CachyOS pkg + AppImage)
 #   - continuous-full    -> full MAME     (SUBTARGET=mame,   binary: mame)
 #   - continuous-arcade  -> arcade only   (SUBTARGET=arcade, binary: mamearcade)
 # Each release ships:
-#   - a CachyOS/Arch package (.pkg.tar.zst) optimized for AMD Zen 3 (-march=znver3)
+#   - a CachyOS/Arch package (.pkg.tar.zst) optimized for AMD Zen 4 (-march=znver4)
 #   - a generic x86-64 AppImage
 # The arcade driver set is defined in src/mame/arcade.flt.
 
@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         flavor: [full, arcade]
-        variant: [znver3, generic]   # znver3 -> .pkg.tar.zst, generic -> AppImage
+        variant: [znver4, generic]   # znver4 -> .pkg.tar.zst, generic -> AppImage
         include:
           - flavor: full
             subtarget: mame
@@ -116,7 +116,7 @@ jobs:
         notes=$(printf '%s\n\n%s\n%s\n%s' \
           "Automated rolling build of commit ${GITHUB_SHA} ($(date -u '+%Y-%m-%d %H:%M UTC'))." \
           "Replaced on every successful run of this workflow." \
-          "- ${{ matrix.executable }}-znver3-*.pkg.tar.zst: CachyOS/Arch package, optimized for AMD Zen 3 (-march=znver3). Install with: sudo pacman -U <file>" \
+          "- ${{ matrix.executable }}-znver4-*.pkg.tar.zst: CachyOS/Arch package, optimized for AMD Zen 4 (-march=znver4). Install with: sudo pacman -U <file>" \
           "- ${{ matrix.executable }}-*.AppImage: generic x86-64 AppImage. Run with: chmod +x <file> && ./<file>")
         gh release delete "$TAG" --repo "$REPO" --cleanup-tag --yes || true
         gh release create "$TAG" dist/* --repo "$REPO" \
