@@ -1103,6 +1103,7 @@
 #include "lespendu.lh"
 #include "pmpoker.lh"
 #include "upndown.lh"
+#include "smb_be4k.lh"
 
 
 namespace {
@@ -5177,6 +5178,69 @@ static INPUT_PORTS_START( icp_etg )  // ICP-1 w/daughterboard
 INPUT_PORTS_END
 
 
+static INPUT_PORTS_START( smb_be4k )
+	// Multiplexed - 4x5bits
+	PORT_START("IN0-0")
+	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_GAMBLE_BET )     PORT_NAME("Play / Bet / Raise")
+	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_GAMBLE_BOOK )    PORT_NAME("Books / Meters")
+	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_GAMBLE_D_UP )    PORT_NAME("Double-Up / BJ Hit")
+	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_START1 )         PORT_NAME("Start / Deal / Draw")
+	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_POKER_CANCEL )   PORT_NAME("Cancel / Game Select")
+	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("IN0-1")
+	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_OTHER )          PORT_READ_LINE_DEVICE_MEMBER("hopper", FUNC(ticket_dispenser_device::line_r))
+	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_GAMBLE_KEYOUT )
+	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_GAMBLE_TAKE )    PORT_NAME("Take / BJ Stand")
+	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_GAMBLE_HIGH )    PORT_NAME("Big")
+	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_GAMBLE_LOW )     PORT_NAME("Small")
+	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("IN0-2")
+	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_POKER_HOLD1 )    PORT_NAME("Hold 1 / Coin1 Set / Turns Set")
+	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_POKER_HOLD2 )    PORT_NAME("Hold 2 / Note1 Set")
+	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_POKER_HOLD3 )    PORT_NAME("Hold 3 / Note2 Set")
+	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_POKER_HOLD4 )
+	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_POKER_HOLD5 )
+	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("IN0-3")
+	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_SERVICE ) PORT_NAME("Learn Mode (Coin-Notes-Turns set)") PORT_CODE(KEYCODE_9)
+	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_OTHER )   PORT_NAME("IN0-3-02")                          PORT_CODE(KEYCODE_E)
+	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_COIN2 )   PORT_NAME("Note 1 In")
+	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_COIN1 )   PORT_NAME("Coin In")   PORT_IMPULSE(3)
+	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_COIN3 )   PORT_NAME("Note 2 In")
+	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x40, IP_ACTIVE_LOW, IPT_UNKNOWN )
+	PORT_BIT( 0x80, IP_ACTIVE_LOW, IPT_UNKNOWN )
+
+	PORT_START("SW1")
+	// only bits 4-7 are connected here and were routed to SW1 1-4
+	PORT_BIT( 0x01, IP_ACTIVE_LOW, IPT_UNUSED )
+	PORT_BIT( 0x02, IP_ACTIVE_LOW, IPT_UNUSED )
+	PORT_BIT( 0x04, IP_ACTIVE_LOW, IPT_UNUSED )
+	PORT_BIT( 0x08, IP_ACTIVE_LOW, IPT_UNUSED )
+	PORT_DIPNAME( 0x10, 0x10, "Jacks or Better" )   PORT_DIPLOCATION("SW1:1")
+	PORT_DIPSETTING(    0x10, DEF_STR( No ) )
+	PORT_DIPSETTING(    0x00, DEF_STR( Yes ) )
+	PORT_DIPNAME( 0x20, 0x00, "Factory Set" )       PORT_DIPLOCATION("SW1:2")
+	PORT_DIPSETTING(    0x20, DEF_STR( Off ) )
+	PORT_DIPSETTING(    0x00, DEF_STR( On ) )    // factory ON
+	PORT_DIPNAME( 0x40, 0x40, "Play Mode" )         PORT_DIPLOCATION("SW1:3")  // listed in the manual as "Play Mode"
+	PORT_DIPSETTING(    0x40, "Points" )                                       // normal game with coin-in. note1-in & note2-in
+	PORT_DIPSETTING(    0x00, "Turns" )                                        // 1-4 turns game with coin-in in thousands units
+	PORT_DIPNAME( 0x80, 0x00, "Top Hand" )          PORT_DIPLOCATION("SW1:4")
+	PORT_DIPSETTING(    0x80, DEF_STR( No ) )
+	PORT_DIPSETTING(    0x00, DEF_STR( Yes ) )
+INPUT_PORTS_END
+
+
 /*********************************************
 *              Graphics Layouts              *
 *********************************************/
@@ -5778,7 +5842,7 @@ void goldnpkr_state::smb_be4k(machine_config &config)
 	goldnpkr(config);
 
 	m_maincpu->set_addrmap(AS_PROGRAM, &goldnpkr_state::smb_be4k_map);
-	
+
 	// basic machine hardware
 	mc6845_device &crtc(MC6845(config.replace(), "crtc", CPU_CLOCK));
 	crtc.set_screen("screen");
@@ -6270,7 +6334,7 @@ ROM_END
    Original hardware, with tearoom*sara text hack.
 
    You can play 1-50 credits.
-   So the hackers removed the "PLAY 1 TO 50" string to put "TEAROOM*SARA" instead.
+   So the hackers removed the "PLAY 1 TO 50" string to put "TEAROOM*SARA" instead.
 */
 ROM_START( goldnpkh )
 	ROM_REGION( 0x10000, "maincpu", 0 )
@@ -6721,7 +6785,7 @@ ROM_END
 
 /*
   Golden/Potten's Poker
-  1986 0415 VER 7.0 1987 06-03 BY PED.
+  1986 0415 VER 7.0 1987 06-03 BY PED.
 
   ICP-1 hardware with modifications.
   The first set has bookkeeping with DSW test.
@@ -14634,6 +14698,42 @@ ROM_START( smb_be4k )
 ROM_END
 
 
+/*
+  Falcon Potten's Poker game
+  with CPU brick.
+
+  PCB silkscreened "KPK" with Falcon sticker.
+
+  Chars ROM is broken or bad dumped,
+  so the first half with the char data
+  is missing.
+
+  In the CPU brick there is a second DSW bank, but seems
+  unimplemented. There are no extra reads to support it.
+
+  The game is writting to PIA0, CA2 line constantly
+  Maybe some watchdog unimplemented circuitry?
+
+*/
+  ROM_START( potnpkrq )
+	ROM_REGION( 0x10000, "maincpu", 0 )
+	ROM_LOAD( "7.16a", 0x2000, 0x1000, CRC(29c647e6) SHA1(1a1c672474c0d4d76728794f661a94925ab245a1) )
+	ROM_LOAD( "8.17a", 0x3000, 0x1000, CRC(3a6e8ca4) SHA1(047edcc344fe97e47d785920d1b499d92febf81f) )
+
+	ROM_REGION( 0x3000, "gfx1", 0 )
+	ROM_FILL(          0x0000, 0x2000, 0x0000 ) // filling the R-G bitplanes
+	ROM_LOAD( "1.4a",  0x2000, 0x1000, BAD_DUMP CRC(b5a1f5a3) SHA1(a34aaaab5443c6962177a5dd35002bd09d0d2772) )    // char ROM
+
+	ROM_REGION( 0x3000, "gfx2", 0 )
+	ROM_LOAD( "2.6a",  0x0000, 0x1000, CRC(b5a1f5a3) SHA1(a34aaaab5443c6962177a5dd35002bd09d0d2772) )    // cards deck gfx, bitplane1
+	ROM_LOAD( "3.7a",  0x1000, 0x1000, CRC(40e426af) SHA1(7e7cb30dafc96bcb87a05d3e0ef5c2d426ed6a74) )    // cards deck gfx, bitplane2
+	ROM_LOAD( "4.8a",  0x2000, 0x1000, CRC(232374f3) SHA1(b75907edbf769b8c46fb1ebdb301c325c556e6c2) )    // cards deck gfx, bitplane3
+
+	ROM_REGION( 0x0100, "proms", 0 )
+	ROM_LOAD( "prom.bin",  0x0000, 0x0100, BAD_DUMP CRC(7f31066b) SHA1(15420780ec6b2870fc4539ec3afe4f0c58eedf12) )
+ROM_END
+
+
 /*********************************************
 *                Driver Init                 *
 *********************************************/
@@ -15390,8 +15490,9 @@ GAMEL( 198?, potnpkrk,  pottnpkr, goldnpkr, goldnpkr, goldnpkr_state, empty_init
 GAMEL( 198?, potnpkrl,  pottnpkr, pottnpkr, potnpkra, goldnpkr_state, empty_init,    ROT0,   "<unknown>",                "Jack Potten's Poker (set 13, ICP-1 PCB)",    0,                layout_goldnpkr )  // unencrypted IPC-1 PCB.
 GAMEL( 1988, potnpkrm,  pottnpkr, pottnpkr, goldnpkr, goldnpkr_state, empty_init,    ROT0,   "bootleg",                  "Jack Potten's Poker (set 14, ICP-1 PCB)",    0,                layout_goldnpkr )  // unencrypted IPC-1 PCB.
 GAME ( 198?, potnpkrn,  pottnpkr, glfever,  glfever,  goldnpkr_state, init_glfev,    ROT0,   "bootleg (PED)",            "Jack Potten's Poker (set 15, w/fever, ICP-1 PCB)", 0 )
-GAMEL( 1987, potnpkro,  pottnpkr, goldnpkr, potnpkro, goldnpkr_state, empty_init,    ROT0,   "bootleg (PED)",            "Jack Potten's Poker (set 16, ICP-1 PCB)",    0,                layout_goldnpkr ) // ICP-1 with mods, 1986 0415 VER 7.0 1987 06-03 BY PED. (wires hack)
-GAMEL( 1987, potnpkrp,  pottnpkr, goldnpkr, potnpkro, goldnpkr_state, empty_init,    ROT0,   "bootleg (PED)",            "Jack Potten's Poker (set 17, ICP-1 PCB)",    0,                layout_goldnpkr ) // ICP-1 with mods, 1986 0415 VER 7.0 1987 06-03 BY PED. (PROM mod)
+GAMEL( 1987, potnpkro,  pottnpkr, goldnpkr, potnpkro, goldnpkr_state, empty_init,    ROT0,   "bootleg (PED)",            "Jack Potten's Poker (set 16, ICP-1 PCB)",    0,                layout_goldnpkr ) // ICP-1 with mods, 1986 0415 VER 7.0 1987 06-03 BY PED. (wires hack)
+GAMEL( 1987, potnpkrp,  pottnpkr, goldnpkr, potnpkro, goldnpkr_state, empty_init,    ROT0,   "bootleg (PED)",            "Jack Potten's Poker (set 17, ICP-1 PCB)",    0,                layout_goldnpkr ) // ICP-1 with mods, 1986 0415 VER 7.0 1987 06-03 BY PED. (PROM mod)
+GAMEL( 198?, potnpkrq,  0,        pottnpkr, pottnpkr, goldnpkr_state, empty_init,    ROT0,   "Falcon",                   "Jack Potten's Poker (set 18, Falcon CPU brick)", MACHINE_IMPERFECT_GRAPHICS | MACHINE_NOT_WORKING, layout_goldnpkr )
 GAMEL( 198?, ngold,     pottnpkr, pottnpkr, ngold,    goldnpkr_state, empty_init,    ROT0,   "<unknown>",                "Jack Potten's Poker (NGold, set 1)",         0,                layout_goldnpkr )
 GAMEL( 198?, ngolda,    pottnpkr, pottnpkr, ngold,    goldnpkr_state, empty_init,    ROT0,   "<unknown>",                "Jack Potten's Poker (NGold, set 2)",         0,                layout_goldnpkr )
 GAMEL( 198?, ngoldb,    pottnpkr, pottnpkr, ngoldb,   goldnpkr_state, empty_init,    ROT0,   "<unknown>",                "Jack Potten's Poker (NGold, set 3)",         0,                layout_goldnpkr )
@@ -15617,4 +15718,8 @@ GAME(  1989, olym65bj,  0,        goldnpkr, goldnpkr, goldnpkr_state, init_olym6
 /*************************************** MULTIGAMES ***************************************/
 
 //     YEAR  NAME       PARENT    MACHINE    INPUT     STATE           INIT         ROT      COMPANY                     FULLNAME                       FLAGS  LAYOUT  
-GAMEL( 1984, smb_be4k,  0,        smb_be4k,  goldnpkr, goldnpkr_state, empty_init,  ROT0,   "Bonanza Enterprises, Ltd", "Super Mini-Boy (BE-4000/SMB)", 0,     layout_goldnpkr )
+GAMEL( 1984, smb_be4k,  0,        smb_be4k,  smb_be4k, goldnpkr_state, empty_init,  ROT0,   "Bonanza Enterprises, Ltd", "Super Mini-Boy (BE-4000/SMB)", 0,     layout_smb_be4k )
+
+
+/*************************************** OTHER/UNCLASSIFIED ***************************************/
+
