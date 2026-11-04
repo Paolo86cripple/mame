@@ -19,7 +19,7 @@ fi
 
 mkdir -p dist
 set +e
-make -j"$(nproc)" SUBTARGET="$SUBTARGET" TOOLS=1 NOWERROR=1 USE_QTDEBUG=0 ARCHOPTS="$ARCHOPTS" 2>&1 | tee build.log
+make -j"$(nproc)" SUBTARGET="$SUBTARGET" TOOLS=1 NOWERROR=1 USE_QTDEBUG=0 SYMBOLS=0 STRIP_SYMBOLS=1 ARCHOPTS="$ARCHOPTS" 2>&1 | tee build.log
 rc=${PIPESTATUS[0]}
 set -e
 if [ "$rc" -ne 0 ]; then
@@ -37,7 +37,7 @@ fi
 VER=$(./"$EXE" -version | awk '{print $1}' | tr -c 'A-Za-z0-9._\n' '_')
 DATE=$(date -u +%Y%m%d)
 SHORT=${GITHUB_SHA:0:8}
-strip "$EXE" chdman romcmp unidasm
+strip --strip-all "$EXE" chdman romcmp unidasm
 
 # Shared install tree: /usr/lib/<exe> holds the binaries and data files.
 stage_tree() {
@@ -114,6 +114,8 @@ DESK
   ./linuxdeploy-x86_64.AppImage --appdir AppDir \
     -e AppDir/usr/lib/$EXE/$EXE -e AppDir/usr/lib/$EXE/chdman \
     -d "AppDir/$EXE.desktop" -i "AppDir/$EXE.svg" || true
+  # drop any debug symbols from the binaries and the libraries bundled by linuxdeploy
+  find AppDir -type f \( -perm -u+x -o -name '*.so*' \) -exec sh -c 'file -b "$1" | grep -q "^ELF" && strip --strip-unneeded "$1" 2>/dev/null || true' _ {} \;
   ./appimagetool-x86_64.AppImage --no-appstream AppDir "dist/$EXE-$VER.$DATE-$SHORT-x86_64.AppImage"
 fi
 
