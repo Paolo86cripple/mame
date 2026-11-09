@@ -2160,6 +2160,35 @@ end
 
 
 ---------------------------------------------------
+-- digiBLAST cartridges
+--@src/devices/bus/digiblast/slot.h,BUSES["DIGIBLAST"] = true
+---------------------------------------------------
+
+if BUSES["DIGIBLAST"] then
+	files {
+		MAME_DIR .. "src/devices/bus/digiblast/slot.cpp",
+		MAME_DIR .. "src/devices/bus/digiblast/slot.h",
+		MAME_DIR .. "src/devices/bus/digiblast/nand.cpp",
+		MAME_DIR .. "src/devices/bus/digiblast/nand.h",
+	}
+end
+
+---------------------------------------------------
+--
+--@src/devices/bus/dimm/dimm.h,BUSES["DIMM"] = true
+---------------------------------------------------
+
+if BUSES["DIMM"] then
+	files {
+		MAME_DIR .. "src/devices/bus/dimm/dimm.cpp",
+		MAME_DIR .. "src/devices/bus/dimm/dimm.h",
+		MAME_DIR .. "src/devices/bus/dimm/modules.cpp",
+		MAME_DIR .. "src/devices/bus/dimm/modules.h",
+	}
+end
+
+
+---------------------------------------------------
 --
 --@src/devices/bus/dmv/dmvbus.h,BUSES["DMV"] = true
 ---------------------------------------------------
@@ -2941,6 +2970,8 @@ if BUSES["IEEE488"] then
 		MAME_DIR .. "src/devices/bus/ieee488/hp9122c.h",
 		MAME_DIR .. "src/devices/bus/ieee488/hp9133.cpp",
 		MAME_DIR .. "src/devices/bus/ieee488/hp9133.h",
+		MAME_DIR .. "src/devices/bus/ieee488/hp9133xv.cpp",
+		MAME_DIR .. "src/devices/bus/ieee488/hp9133xv.h",
 		MAME_DIR .. "src/devices/bus/ieee488/hp9895.cpp",
 		MAME_DIR .. "src/devices/bus/ieee488/hp9895.h",
 		MAME_DIR .. "src/devices/bus/ieee488/remote488.cpp",
@@ -3454,6 +3485,23 @@ if BUSES["M5"] then
 		MAME_DIR .. "src/devices/bus/m5/slot.h",
 		MAME_DIR .. "src/devices/bus/m5/rom.cpp",
 		MAME_DIR .. "src/devices/bus/m5/rom.h",
+	}
+end
+
+
+---------------------------------------------------
+--
+--@src/devices/bus/maccomm/maccomm.h,BUSES["MACCOMM"] = true
+---------------------------------------------------
+
+if BUSES["MACCOMM"] then
+	files {
+		MAME_DIR .. "src/devices/bus/maccomm/cards.cpp",
+		MAME_DIR .. "src/devices/bus/maccomm/cards.h",
+		MAME_DIR .. "src/devices/bus/maccomm/maccomm.cpp",
+		MAME_DIR .. "src/devices/bus/maccomm/maccomm.h",
+		MAME_DIR .. "src/devices/bus/maccomm/sonicsmc.cpp",
+		MAME_DIR .. "src/devices/bus/maccomm/sonicsmc.h",
 	}
 end
 
@@ -4795,6 +4843,8 @@ if BUSES["PCI"] then
 		MAME_DIR .. "src/devices/bus/pci/ds2416.h",
 		MAME_DIR .. "src/devices/bus/pci/ess_maestro.cpp",
 		MAME_DIR .. "src/devices/bus/pci/ess_maestro.h",
+		MAME_DIR .. "src/devices/bus/pci/et4kw32p.cpp",
+		MAME_DIR .. "src/devices/bus/pci/et4kw32p.h",
 		MAME_DIR .. "src/devices/bus/pci/geforce.cpp",
 		MAME_DIR .. "src/devices/bus/pci/geforce.h",
 		MAME_DIR .. "src/devices/bus/pci/mga2064w.cpp",
@@ -6057,6 +6107,21 @@ if BUSES["TECHNICS_KN5000"] then
 		MAME_DIR .. "src/devices/bus/technics/kn5000/kn5000_extension.h",
 		MAME_DIR .. "src/devices/bus/technics/kn5000/hdae5000.cpp",
 		MAME_DIR .. "src/devices/bus/technics/kn5000/hdae5000.h",
+	}
+end
+
+
+---------------------------------------------------
+--
+--@src/devices/bus/technics/kn6000/kn6000_expansion.h,BUSES["TECHNICS_KN6000"] = true
+---------------------------------------------------
+
+if BUSES["TECHNICS_KN6000"] then
+	files {
+		MAME_DIR .. "src/devices/bus/technics/kn6000/kn6000_expansion.cpp",
+		MAME_DIR .. "src/devices/bus/technics/kn6000/kn6000_expansion.h",
+		MAME_DIR .. "src/devices/bus/technics/kn6000/hdsx6.cpp",
+		MAME_DIR .. "src/devices/bus/technics/kn6000/hdsx6.h",
 	}
 end
 

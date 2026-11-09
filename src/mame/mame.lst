@@ -22134,6 +22134,7 @@ wldfruit
 @source:igs/igs_m036.cpp
 cjbq
 cjddzsp
+cjddzsp122cn
 cjdh2
 cjdh2a
 cjdh2b
@@ -23147,6 +23148,7 @@ entrada
 
 @source:intel/i430lx.cpp
 ga586ip
+pcd5h
 sy029c2
 
 @source:intel/imds2.cpp
@@ -26916,7 +26918,8 @@ xmenua
 
 @source:konami/yiear.cpp
 yiear
-yiear2
+yiearg
+yieari
 
 @source:konami/zr107.cpp
 jetwave
@@ -30937,6 +30940,9 @@ diamondk
 diamondko
 goldnchp
 
+@source:misc/digiblast.cpp
+digiblst
+
 @source:misc/discoboy.cpp
 discoboy
 discoboyp
@@ -32105,6 +32111,7 @@ ngoldb
 olym65bj
 olym65wc
 op5cards
+phnxjokr
 pmpoker
 poker91
 pokerdub
@@ -32139,6 +32146,7 @@ super98
 superdbl
 techtrna
 techtrnb
+touksysp
 unkdep
 unkicpf40
 unkicpf80
@@ -32718,6 +32726,12 @@ fruitstbf
 fruitstbg
 fruitstbh
 fruitstbi
+fruitstbj
+fruitstbk
+fruitstbl
+fruitstbm
+fruitstbn
+fruitstbo
 goldnjkr
 goldnjkra
 
@@ -37791,6 +37805,7 @@ tosh1000
 bmanroul
 fishingm
 ggconnie
+junghero
 smf
 
 @source:pce/paranoia.cpp
@@ -40861,6 +40876,11 @@ bbddza
 ddz1
 ddz2
 ddz2a
+ddz2b
+ddz2c
+ddz2d
+ddz2e
+ddz2f
 djddz
 djddza
 fkddzz80
@@ -44063,9 +44083,6 @@ modulab
 digel804
 ep804
 
-@source:skeleton/digiblast.cpp
-digiblst
-
 @source:skeleton/digijet.cpp
 digijet
 
@@ -45654,6 +45671,7 @@ coolbi
 modcart
 
 @source:subsino/subsino2.cpp
+bigboss
 bishjan
 blushark
 dongshiz
@@ -45672,6 +45690,7 @@ queenbee
 queenbee107u
 queenbee117a
 queenbee123a
+queenbee124a
 queenbeeb
 queenbeei
 queenbeesa

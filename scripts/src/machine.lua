@@ -3142,6 +3142,8 @@ if MACHINES["PCI"] then
 		MAME_DIR .. "src/devices/machine/sis950_smbus.h",
 		MAME_DIR .. "src/devices/machine/sis85c496.cpp",
 		MAME_DIR .. "src/devices/machine/sis85c496.h",
+		MAME_DIR .. "src/devices/machine/vt8231_acpi.cpp",
+		MAME_DIR .. "src/devices/machine/vt8231_acpi.h",
 		MAME_DIR .. "src/devices/machine/vt8231_isa.cpp",
 		MAME_DIR .. "src/devices/machine/vt8231_isa.h",
 		MAME_DIR .. "src/devices/machine/vt82c585vp.cpp",
@@ -3226,6 +3228,18 @@ if MACHINES["PIT8253"] then
 	files {
 		MAME_DIR .. "src/devices/machine/pit8253.cpp",
 		MAME_DIR .. "src/devices/machine/pit8253.h",
+	}
+end
+
+---------------------------------------------------
+--
+--@src/devices/machine/pl080.h,MACHINES["PL080"] = true
+---------------------------------------------------
+
+if MACHINES["PL080"] then
+	files {
+		MAME_DIR .. "src/devices/machine/pl080.cpp",
+		MAME_DIR .. "src/devices/machine/pl080.h",
 	}
 end
 
@@ -3532,6 +3546,18 @@ if MACHINES["S3520CF"] then
 	files {
 		MAME_DIR .. "src/devices/machine/s3520cf.cpp",
 		MAME_DIR .. "src/devices/machine/s3520cf.h",
+	}
+end
+
+---------------------------------------------------
+--
+--@src/devices/machine/s35390a.h,MACHINES["S35390A"] = true
+---------------------------------------------------
+
+if MACHINES["S35390A"] then
+	files {
+		MAME_DIR .. "src/devices/machine/s35390a.cpp",
+		MAME_DIR .. "src/devices/machine/s35390a.h",
 	}
 end
 
@@ -4225,6 +4251,18 @@ end
 
 ---------------------------------------------------
 --
+--@src/devices/machine/upd72070.h,MACHINES["UPD72070"] = true
+---------------------------------------------------
+
+if MACHINES["UPD72070"] then
+	files {
+		MAME_DIR .. "src/devices/machine/upd72070.cpp",
+		MAME_DIR .. "src/devices/machine/upd72070.h",
+	}
+end
+
+---------------------------------------------------
+--
 --@src/devices/machine/upd765.h,MACHINES["UPD765"] = true
 ---------------------------------------------------
 
@@ -4846,6 +4884,18 @@ if MACHINES["FDC37C665IR"] then
 	files {
 		MAME_DIR .. "src/devices/machine/fdc37c665ir.cpp",
 		MAME_DIR .. "src/devices/machine/fdc37c665ir.h",
+	}
+end
+
+---------------------------------------------------
+--
+--@src/devices/machine/fdc37c669.h,MACHINES["FDC37C669"] = true
+---------------------------------------------------
+
+if MACHINES["FDC37C669"] then
+	files {
+		MAME_DIR .. "src/devices/machine/fdc37c669.cpp",
+		MAME_DIR .. "src/devices/machine/fdc37c669.h",
 	}
 end
 
