@@ -20090,6 +20090,7 @@ spctrek
 spctbird
 spdcoin
 sstarcrs
+staratk
 starfght
 starfgmc
 stera
@@ -20140,7 +20141,7 @@ zigzagb2
 rockclim
 
 @source:galaxian/galaxold.cpp
-4in1
+4funin1
 bullsdrtg
 devilfshv
 dingov
@@ -21649,6 +21650,7 @@ cm1codara
 cm1codarb
 cm1spa
 cmast91
+cmast91g
 cmast97
 cmast97a
 cmast97b
@@ -22135,6 +22137,8 @@ wldfruit
 cjbq
 cjddzsp
 cjddzsp122cn
+cjddzsp126cn
+cjddzsp127cn
 cjdh2
 cjdh2a
 cjdh2b
@@ -23626,12 +23630,14 @@ hotmemry11
 pairs
 pairsa
 pairsred
+pubball
 sftm
 sftm110
 sftm111
 sftmj114
 sftmj112
 sftmk112
+shoottv
 shufshot
 shufshot135
 shufshot137
@@ -23658,8 +23664,7 @@ wcbowl16
 wcbowl161
 wcbowl165
 wcbowldx
-shoottv
-pubball
+wcbowldx200
 
 @source:jaleco/acommand.cpp
 acommand
@@ -29623,8 +29628,8 @@ rs3230
 48in1a
 48in1b
 48in1c
+4in1
 4in1a
-4in1b
 60in1
 fruitwld
 fruitwlda
@@ -32056,6 +32061,7 @@ goldnpke
 goldnpkf
 goldnpkg
 goldnpkh
+goldnpki
 goldnpkr
 goodluck
 gp_jpn22
@@ -32096,6 +32102,7 @@ icpf80_21
 icproul
 jkrbonus
 jokercar
+jokerush
 kmhpan
 lespendu
 lespenduj
@@ -32112,6 +32119,7 @@ olym65bj
 olym65wc
 op5cards
 phnxjokr
+pk5_07sb
 pmpoker
 poker91
 pokerdub
@@ -32167,6 +32175,14 @@ witchcrdi
 witchcrdj
 witchgme
 witchgmea
+witchgmeb
+witchgmec
+witchgmed
+witchgmee
+witchgmef
+witchgmeg
+witchgmeh
+witchgmei
 witchjol
 wldwitch
 wldwitcha
@@ -32191,6 +32207,7 @@ wldwitchs
 wldwitcht
 wldwitchu
 wldwitchv
+wldwitchw
 wstrike
 wstrikea
 wtchjack
@@ -35890,18 +35907,25 @@ nespal
 smb3bl
 
 @source:nintendo/nes_clone.cpp
+2pathlet
 afbm7800
 croaky
 dancexpt
 danzkara
 digezlg
 dnce2000
+flshdnce
+glkdance
+nes9in1
+nvbaseb
 nytsudo
 papsudok
 pjoypj001
 popstar
 pv95in1
 racechl8
+rumblstn
+twindncr
 vtvppong
 vtvsocr
 
@@ -36652,7 +36676,9 @@ cexpert
 
 @source:novag/cforte.cpp
 cfortea
+cfortea1
 cforteb
+cforteb1
 
 @source:novag/cnchess.cpp
 cnchess
@@ -47967,6 +47993,7 @@ trsvidtx
 @source:trs/coco12.cpp
 cd6809
 coco
+coco2
 coco2b
 coco2bh
 cocoh
@@ -48039,7 +48066,12 @@ trs80l2
 trs80dt1
 
 @source:trs/trs80m2.cpp
+tandy6k
+tandy6khd
+trs80m12
 trs80m16
+trs80m16b
+trs80m16bhd
 trs80m2
 
 @source:trs/trs80m3.cpp
