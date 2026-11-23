@@ -1408,6 +1408,8 @@ if CPUS["I386"] then
 		MAME_DIR .. "src/devices/cpu/i386/pentops.hxx",
 		MAME_DIR .. "src/devices/cpu/i386/x87ops.hxx",
 		MAME_DIR .. "src/devices/cpu/i386/x87priv.h",
+		MAME_DIR .. "src/devices/cpu/i386/x87slot.cpp",
+		MAME_DIR .. "src/devices/cpu/i386/x87slot.h",
 		MAME_DIR .. "src/devices/cpu/i386/cpuidmsrs.hxx",
 	}
 end
@@ -1678,6 +1680,23 @@ end
 if opt_tool(CPUS, "PIC17") then
 	table.insert(disasm_files , MAME_DIR .. "src/devices/cpu/pic17/pic17d.cpp")
 	table.insert(disasm_files , MAME_DIR .. "src/devices/cpu/pic17/pic17d.h")
+end
+
+--------------------------------------------------
+-- VideoLogic PMX1 (PowerVR 250) primary core
+--@src/devices/cpu/pmx1/pmx1core.h,CPUS["PMX1CORE"] = true
+--------------------------------------------------
+
+if CPUS["PMX1CORE"] then
+	files {
+		MAME_DIR .. "src/devices/cpu/pmx1/pmx1core.cpp",
+		MAME_DIR .. "src/devices/cpu/pmx1/pmx1core.h",
+	}
+end
+
+if opt_tool(CPUS, "PMX1CORE") then
+	table.insert(disasm_files , MAME_DIR .. "src/devices/cpu/pmx1/pmx1dasm.cpp")
+	table.insert(disasm_files , MAME_DIR .. "src/devices/cpu/pmx1/pmx1dasm.h")
 end
 
 --------------------------------------------------
@@ -3074,6 +3093,7 @@ if CPUS["TMS320C82"] then
 		MAME_DIR .. "src/devices/cpu/tms320c82/tms320c82.cpp",
 		MAME_DIR .. "src/devices/cpu/tms320c82/tms320c82.h",
 		MAME_DIR .. "src/devices/cpu/tms320c82/mp_ops.cpp",
+		MAME_DIR .. "src/devices/cpu/tms320c82/pp_ops.cpp",
 	}
 end
 

@@ -222,6 +222,7 @@ const double XTAL::known_xtals[] = {
 	 12'292'000, // 12.292_MHz_XTAL        Northwest Digitial Systems GP-19
 	 12'324'000, // 12.324_MHz_XTAL        Otrona Attache
 	 12'335'600, // 12.3356_MHz_XTAL       RasterOps ColorBoard 264 (~784x NTSC line rate)
+	 12'395'000, // 12.395_MHz_XTAL        Heathkit H9 video terminal
 	 12'440'000, // 12.44_MHz_XTAL         Status casino / trivia games
 	 12'472'500, // 12.4725_MHz_XTAL       Bonanza's Mini Boy 7
 	 12'480'000, // 12.48_MHz_XTAL         TRS-80 Model II
@@ -269,6 +270,7 @@ const double XTAL::known_xtals[] = {
 	 14'916'000, // 14.916_MHz_XTAL        ADDS Viewpoint 122
 	 14'976'000, // 14.976_MHz_XTAL        CIT-101 80-column display clock
 	 15'000'000, // 15_MHz_XTAL            Sinclair QL, Amusco Poker
+	 15'052'800, // 15.0528_MHz_XTAL       Centris 660AV 44.1kHz audio
 	 15'148'800, // 15.1488_MHz_XTAL       Zentec 9002/9003
 	 15'206'400, // 15.2064_MHz_XTAL       Falco TS-1
 	 15'288'000, // 15.288_MHz_XTAL        DEC VT220 80-column display clock
@@ -339,6 +341,7 @@ const double XTAL::known_xtals[] = {
 	 19'660'800, // 19.6608_MHz_XTAL       Euro League (bootleg), labeled as "UKI 19.6608 20PF"
 	 19'661'400, // 19.6614_MHz_XTAL       Wyse WY-30
 	 19'718'400, // 19.7184_MHz_XTAL       Informer 207/100
+	 19'767'600, // 19.7676_MHz_XTAL       Zenith Z-49 80-column display clock
 	 19'923'000, // 19.923_MHz_XTAL        Cinematronics vectors
 	 19'968'000, // 19.968_MHz_XTAL        Used mostly by some Taito games
 	 20'000'000, // 20_MHz_XTAL            -
@@ -381,6 +384,7 @@ const double XTAL::known_xtals[] = {
 	 24'270'000, // 24.27_MHz_XTAL         CIT-101XL
 	 24'300'000, // 24.3_MHz_XTAL          ADM 36 132-column display clock
 	 24'576'000, // 24.576_MHz_XTAL        Pole Position h/w, Model 3 CPU board
+	 24'806'400, // 24.8064_MHz_XTAL       Zenith Z-49 132-column display and CPU clock
 	 24'883'200, // 24.8832_MHz_XTAL       DEC VT100
 	 25'000'000, // 25_MHz_XTAL            Namco System 22, Taito GNET, Dogyuun h/w
 	 25'174'800, // 25.1748_MHz_XTAL       Sega System 16A/16B (1600x NTSC line rate)
@@ -512,6 +516,7 @@ const double XTAL::known_xtals[] = {
 	 54'000'000, // 54_MHz_XTAL            Taito JC
 	 54'285'700, // 54.2857_MHz_XTAL       Qume QVT-82
 	 55'000'000, // 55_MHz_XTAL            Eolith Vega
+	 55'500'000, // 55.5_MHz_XTAL          Centris 660AV DSP clock
 	 56'000'000, // 56_MHz_XTAL            ARM7500 based Belatra slot machines
 	 57'242'400, // 57.2424_MHz_XTAL       Gunpey
 	 57'272'727, // 57.272727_MHz_XTAL     Psikyo SH2 with /2 divider (16x NTSC subcarrier)

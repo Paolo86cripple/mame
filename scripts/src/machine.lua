@@ -1476,6 +1476,7 @@ end
 --
 --@src/devices/machine/eeprom.h,MACHINES["EEPROMDEV"] = true
 --@src/devices/machine/eepromser.h,MACHINES["EEPROMDEV"] = true
+--@src/devices/machine/eepromspi.h,MACHINES["EEPROMDEV"] = true
 --@src/devices/machine/eeprompar.h,MACHINES["EEPROMDEV"] = true
 ---------------------------------------------------
 
@@ -1485,6 +1486,8 @@ if MACHINES["EEPROMDEV"] then
 		MAME_DIR .. "src/devices/machine/eeprom.h",
 		MAME_DIR .. "src/devices/machine/eepromser.cpp",
 		MAME_DIR .. "src/devices/machine/eepromser.h",
+		MAME_DIR .. "src/devices/machine/eepromspi.cpp",
+		MAME_DIR .. "src/devices/machine/eepromspi.h",
 		MAME_DIR .. "src/devices/machine/eeprompar.cpp",
 		MAME_DIR .. "src/devices/machine/eeprompar.h",
 	}
@@ -2333,30 +2336,6 @@ end
 
 ---------------------------------------------------
 --
---@src/devices/machine/m950x0.h,MACHINES["M950X0"] = true
----------------------------------------------------
-
-if MACHINES["M950X0"] then
-	files {
-		MAME_DIR .. "src/devices/machine/m950x0.cpp",
-		MAME_DIR .. "src/devices/machine/m950x0.h",
-	}
-end
-
----------------------------------------------------
---
---@src/devices/machine/m95320.h,MACHINES["M95320"] = true
----------------------------------------------------
-
-if MACHINES["M95320"] then
-	files {
-		MAME_DIR .. "src/devices/machine/m95320.cpp",
-		MAME_DIR .. "src/devices/machine/m95320.h",
-	}
-end
-
----------------------------------------------------
---
 --@src/devices/machine/macseconds.h,MACHINES["MACSECONDS"] = true
 ---------------------------------------------------
 
@@ -3144,6 +3123,8 @@ if MACHINES["PCI"] then
 		MAME_DIR .. "src/devices/machine/sis85c496.h",
 		MAME_DIR .. "src/devices/machine/vt8231_acpi.cpp",
 		MAME_DIR .. "src/devices/machine/vt8231_acpi.h",
+		MAME_DIR .. "src/devices/machine/vt8231_ide.cpp",
+		MAME_DIR .. "src/devices/machine/vt8231_ide.h",
 		MAME_DIR .. "src/devices/machine/vt8231_isa.cpp",
 		MAME_DIR .. "src/devices/machine/vt8231_isa.h",
 		MAME_DIR .. "src/devices/machine/vt82c585vp.cpp",
@@ -3981,6 +3962,18 @@ if MACHINES["TIMEKPR"] then
 	files {
 		MAME_DIR .. "src/devices/machine/timekpr.cpp",
 		MAME_DIR .. "src/devices/machine/timekpr.h",
+	}
+end
+
+---------------------------------------------------
+--
+--@src/devices/machine/tlc5620.h,MACHINES["TLC5620"] = true
+---------------------------------------------------
+
+if MACHINES["TLC5620"] then
+	files {
+		MAME_DIR .. "src/devices/machine/tlc5620.cpp",
+		MAME_DIR .. "src/devices/machine/tlc5620.h",
 	}
 end
 

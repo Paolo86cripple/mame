@@ -254,6 +254,8 @@ if BUSES["A2KBD"] then
 		MAME_DIR .. "src/devices/bus/a2kbd/kb200.h",
 		MAME_DIR .. "src/devices/bus/a2kbd/nkbd.cpp",
 		MAME_DIR .. "src/devices/bus/a2kbd/nkbd.h",
+		MAME_DIR .. "src/devices/bus/a2kbd/okbd.cpp",
+		MAME_DIR .. "src/devices/bus/a2kbd/okbd.h",
 		MAME_DIR .. "src/devices/bus/a2kbd/tk10.cpp",
 		MAME_DIR .. "src/devices/bus/a2kbd/tk10.h",
 		MAME_DIR .. "src/devices/bus/a2kbd/videnh2.cpp",
@@ -1570,6 +1572,8 @@ if BUSES["C64"] then
 		MAME_DIR .. "src/devices/bus/c64/tdos.h",
 		MAME_DIR .. "src/devices/bus/c64/turbo232.cpp",
 		MAME_DIR .. "src/devices/bus/c64/turbo232.h",
+		MAME_DIR .. "src/devices/bus/c64/turbotrans.cpp",
+		MAME_DIR .. "src/devices/bus/c64/turbotrans.h",
 		MAME_DIR .. "src/devices/bus/c64/vizastar.cpp",
 		MAME_DIR .. "src/devices/bus/c64/vizastar.h",
 		MAME_DIR .. "src/devices/bus/c64/vw64.cpp",
@@ -1734,6 +1738,8 @@ if BUSES["CBMIEC"] then
 		MAME_DIR .. "src/devices/bus/cbmiec/sd2iec.h",
 		MAME_DIR .. "src/devices/bus/cbmiec/serialbox.cpp",
 		MAME_DIR .. "src/devices/bus/cbmiec/serialbox.h",
+		MAME_DIR .. "src/devices/bus/cbmiec/speeddos.cpp",
+		MAME_DIR .. "src/devices/bus/cbmiec/speeddos.h",
 		MAME_DIR .. "src/devices/bus/cbmiec/turbotrans.cpp",
 		MAME_DIR .. "src/devices/bus/cbmiec/turbotrans.h",
 		MAME_DIR .. "src/devices/bus/cbmiec/vic1515.cpp",
@@ -2694,8 +2700,26 @@ end
 
 if BUSES["HEATHZENITH_H19"] then
 	files {
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/cards.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/cards.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/gp19.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/gp19.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/igc.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/igc.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/imaginator.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/imaginator.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/super19.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/super19.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/superset.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/superset.h",
 		MAME_DIR .. "src/devices/bus/heathzenith/h19/tlb.cpp",
 		MAME_DIR .. "src/devices/bus/heathzenith/h19/tlb.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/tlbbase.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/tlbbase.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/ultra.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/ultra.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/watz.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h19/watz.h",
 	}
 end
 
@@ -2746,6 +2770,10 @@ if BUSES["HEATHZENITH_H89"] then
 	files {
 		MAME_DIR .. "src/devices/bus/heathzenith/h89/cdr_fdc_880h.cpp",
 		MAME_DIR .. "src/devices/bus/heathzenith/h89/cdr_fdc_880h.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h89/dsm240.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h89/dsm240.h",
+		MAME_DIR .. "src/devices/bus/heathzenith/h89/gpp_speed.cpp",
+		MAME_DIR .. "src/devices/bus/heathzenith/h89/gpp_speed.h",
 		MAME_DIR .. "src/devices/bus/heathzenith/h89/h89bus.cpp",
 		MAME_DIR .. "src/devices/bus/heathzenith/h89/h89bus.h",
 		MAME_DIR .. "src/devices/bus/heathzenith/h89/h17_fdc.cpp",
@@ -4580,12 +4608,14 @@ end
 
 if BUSES["PC_JOY"] then
 	files {
+		MAME_DIR .. "src/devices/bus/pc_joy/basic_joy.cpp",
+		MAME_DIR .. "src/devices/bus/pc_joy/basic_joy.h",
+		MAME_DIR .. "src/devices/bus/pc_joy/mssw.cpp",
+		MAME_DIR .. "src/devices/bus/pc_joy/mssw.h",
+		MAME_DIR .. "src/devices/bus/pc_joy/options.cpp",
+		MAME_DIR .. "src/devices/bus/pc_joy/options.h",
 		MAME_DIR .. "src/devices/bus/pc_joy/pc_joy.cpp",
 		MAME_DIR .. "src/devices/bus/pc_joy/pc_joy.h",
-		MAME_DIR .. "src/devices/bus/pc_joy/pc_joy_magnum6.cpp",
-		MAME_DIR .. "src/devices/bus/pc_joy/pc_joy_magnum6.h",
-		MAME_DIR .. "src/devices/bus/pc_joy/pc_joy_sw.cpp",
-		MAME_DIR .. "src/devices/bus/pc_joy/pc_joy_sw.h",
 	}
 end
 
@@ -4883,6 +4913,8 @@ if BUSES["PCI"] then
 		MAME_DIR .. "src/devices/bus/pci/sw1000xg.h",
 		MAME_DIR .. "src/devices/bus/pci/trident_4dwavedx.cpp",
 		MAME_DIR .. "src/devices/bus/pci/trident_4dwavedx.h",
+		MAME_DIR .. "src/devices/bus/pci/trident_tgui.cpp",
+		MAME_DIR .. "src/devices/bus/pci/trident_tgui.h",
 		MAME_DIR .. "src/devices/bus/pci/trio_pci.cpp",
 		MAME_DIR .. "src/devices/bus/pci/trio_pci.h",
 		MAME_DIR .. "src/devices/bus/pci/virge_pci.cpp",

@@ -176,7 +176,6 @@ public:
 		m_maincpu(*this, "maincpu") { }
 
 	void m036_tt(machine_config &config) ATTR_COLD;
-	void m036(machine_config &config) ATTR_COLD;
 
 	void init_m036() ATTR_COLD;
 	template <const uint8_t (&Key)[0x100]> void init_key() ATTR_COLD;
@@ -1153,26 +1152,6 @@ INPUT_PORTS_END
 
 
 
-void m036_state::m036(machine_config &config)
-{
-	IGS036(config, m_maincpu, 20_MHz_XTAL);
-	m_maincpu->set_addrmap(AS_PROGRAM, &m036_state::m036_map);
-
-	screen_device &screen(SCREEN(config, "screen"));
-	screen.set_refresh_hz(60);
-	screen.set_vblank_time(ATTOSECONDS_IN_USEC(0));
-	screen.set_size(512, 256);
-	screen.set_visarea(0, 512-1, 0, 256-1);
-	screen.set_screen_update(FUNC(m036_state::screen_update_m036));
-	screen.set_palette("palette");
-
-	PALETTE(config, "palette").set_entries(0x200);
-
-	SPEAKER(config, "speaker").front_center();
-	OKIM6295(config, "oki", 1'000'000, okim6295_device::PIN7_LOW).add_route(ALL_OUTPUTS, "speaker", 1.0); // clock and pin 7 not verified
-}
-
-
 void m036_state::m036_tt(machine_config &config)
 {
 	IGS036(config, m_maincpu, 20_MHz_XTAL);
@@ -1225,6 +1204,7 @@ void m036_oki_state::m036_boot(machine_config &config)
 	hopper_config(config);
 	m_maincpu->set_addrmap(AS_PROGRAM, &m036_oki_state::m036_oki_boot_map);
 	m_maincpu->set_gpio_w().set(FUNC(m036_oki_state::gpio_hopper_w));
+
 	OKIM6295(config, m_oki, 1'000'000, okim6295_device::PIN7_LOW); // clock and pin 7 not verified
 	m_oki->set_addrmap(0, &m036_oki_state::oki_rom_map);
 	m_oki->add_route(ALL_OUTPUTS, "speaker", 1.0);
@@ -1317,7 +1297,7 @@ void m036_hyleyuan_state::m036_hyleyuan(machine_config &config)
 ROM_START( cjdh2 )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "chaohen2_igs036", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "cjdh2_igs036.bin", 0x00000, 0x4000, CRC(c7004b43) SHA1(818b6f1247f1e3ea6e58b7fa0311931ce3ae4109) )
 
 	// there is also a square socketed chip like the one on Haunted House (igs_m027) probably in need of dumping
 
@@ -1335,7 +1315,7 @@ ROM_END
 ROM_START( cjdh2a )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "chaohen2_igs036", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "cjdh2_igs036.bin", 0x00000, 0x4000, CRC(c7004b43) SHA1(818b6f1247f1e3ea6e58b7fa0311931ce3ae4109) )
 
 	// there is also a square socketed chip like the one on Haunted House (igs_m027) probably in need of dumping
 
@@ -1353,7 +1333,7 @@ ROM_END
 ROM_START( cjdh2b )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "chaohen2_igs036", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "cjdh2_igs036.bin", 0x00000, 0x4000, CRC(c7004b43) SHA1(818b6f1247f1e3ea6e58b7fa0311931ce3ae4109) )
 
 	// there is also a square socketed chip like the one on Haunted House (igs_m027) probably in need of dumping
 
@@ -1371,7 +1351,7 @@ ROM_END
 ROM_START( cjdh2c )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "chaohen2_igs036", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "cjdh2_igs036.bin", 0x00000, 0x4000, CRC(c7004b43) SHA1(818b6f1247f1e3ea6e58b7fa0311931ce3ae4109) )
 
 	// there is also a square socketed chip like the one on Haunted House (igs_m027) probably in need of dumping
 
@@ -1389,7 +1369,7 @@ ROM_END
 ROM_START( cjdh2d ) // PCB-0674-03-IK. IGS036 + M6295 compatible + Altera EPM3032ALC44-10N + 2 banks of 8 DIP switches
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "d7_igs036.u18", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "d7_igs036.u18", 0x00000, 0x4000,  CRC(c7004b43) SHA1(818b6f1247f1e3ea6e58b7fa0311931ce3ae4109) )
 
 	ROM_REGION32_LE( 0x200000, "user1", 0 ) // external ARM data / prg
 	ROM_LOAD( "cjdh2_s311cn.u33", 0x000000, 0x200000, CRC(a6fb72f0) SHA1(1d9583eafaea21d5ec078b7f2e3dc426571a9550) )
@@ -1579,7 +1559,7 @@ ROM_END
 ROM_START( lhzb3in1 )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "lhzb3in1_igs036", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "lhzb3in1_igs036.bin", 0x00000, 0x4000, CRC(a597d0c8) SHA1(1bca73acc5ef820b860e6c99dc5be0bcff2b1c45) )
 
 	ROM_REGION32_LE( 0x200000, "user1", 0 ) // external ARM data / prg
 	ROM_LOAD( "lhzb3in1_v100cn.u17",  0x000000, 0x200000, CRC(03caaba4) SHA1(701b97d791e9329bad2ddc4d365748e65c430758) )
@@ -1654,10 +1634,7 @@ ROM_START( lhfy )
 	ROM_REGION( 0x10000000, "gfx", 0 )
 	// 4x 64MB flash ROMs (U1, U2, U3, U4) mounted onto a custom SODIMM at CN1 with a sticker "CG V206CN"
 	ROM_LOAD( "cg_v206cn.u1", 0x0000000, 0x4000000, CRC(6abd4a31) SHA1(6c5eefc3671c4192a689cb1e82605e65fec44384) )
-	// Suspect read corruption at the starts of 0x800-byte blocks: this lane alone
-	// produces periodic dots in raw sprites, and compressed image lengths disagree.
-	// FIXME: independent redump required to confirm the suspected corruption.
-	ROM_LOAD( "cg_v206cn.u2", 0x4000000, 0x4000000, BAD_DUMP CRC(b37e94b2) SHA1(da9e8b38070412a1b4057ddaf1df65878f3e135a) )
+	ROM_LOAD( "cg_v206cn.u2", 0x4000000, 0x4000000, BAD_DUMP CRC(4029df1a) SHA1(82baca3dc306cefc72c94adb4b4105bb54b557ee) ) // taken from lhzbgqb
 	ROM_LOAD( "cg_v206cn.u3", 0x8000000, 0x4000000, CRC(b379503c) SHA1(fc7d5c4afcef6a7448cc6547fa73e51378a67b3d) )
 	ROM_LOAD( "cg_v206cn.u4", 0xc000000, 0x4000000, CRC(f96be9f1) SHA1(fe957af2e31007b570c4f4b707400a87be1b4301) )
 ROM_END
@@ -1708,7 +1685,7 @@ ROM_END
 ROM_START( lhzbgqb )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "lhzbgqb_igs036", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "lhzbgqb_igs036.bin", 0x00000, 0x4000, CRC(f38af294) SHA1(a6f3c185ffccec48b8997357d3847c86c95da83d) )
 
 	ROM_REGION32_LE( 0x200000, "user1", 0 ) // external ARM data / prg
 	ROM_LOAD( "v-105cn.u11", 0x000000, 0x200000, CRC(cecbb560) SHA1(262d7df19b57e57aa50cc241ddc25090411d6b74) )
@@ -1718,10 +1695,29 @@ ROM_START( lhzbgqb )
 
 	ROM_REGION( 0x10000000, "gfx", ROMREGION_ERASE00 )
 	// 4x 64MB flash ROMs (U1, U2, U3, U4) mounted onto a custom SODIMM at CN1 with a sticker "CG V105CN"
-	ROM_LOAD( "cg_v105cn.u1", 0x0000000, 0x4000000, NO_DUMP )
-	ROM_LOAD( "cg_v105cn.u2", 0x4000000, 0x4000000, NO_DUMP )
-	ROM_LOAD( "cg_v105cn.u3", 0x8000000, 0x4000000, NO_DUMP )
-	ROM_LOAD( "cg_v105cn.u4", 0xc000000, 0x4000000, NO_DUMP )
+	ROM_LOAD( "cg_v105cn.u1", 0x0000000, 0x4000000, BAD_DUMP CRC(6abd4a31) SHA1(6c5eefc3671c4192a689cb1e82605e65fec44384) ) // wouldn't read, taken from lhfy
+	ROM_LOAD( "cg_v105cn.u2", 0x4000000, 0x4000000, CRC(4029df1a) SHA1(82baca3dc306cefc72c94adb4b4105bb54b557ee) )
+	ROM_LOAD( "cg_v105cn.u3", 0x8000000, 0x4000000, BAD_DUMP CRC(b379503c) SHA1(fc7d5c4afcef6a7448cc6547fa73e51378a67b3d) ) // wouldn't read, taken from lhfy
+	ROM_LOAD( "cg_v105cn.u4", 0xc000000, 0x4000000, CRC(f96be9f1) SHA1(fe957af2e31007b570c4f4b707400a87be1b4301) )
+ROM_END
+
+ROM_START( lhzbgqb104cn )
+	ROM_REGION( 0x04000, "maincpu", 0 )
+	// Internal ROM of IGS036 ARM based MCU
+	ROM_LOAD( "lhzbgqb_igs036.bin", 0x00000, 0x4000, CRC(f38af294) SHA1(a6f3c185ffccec48b8997357d3847c86c95da83d) )
+
+	ROM_REGION32_LE( 0x200000, "user1", 0 ) // external ARM data / prg
+	ROM_LOAD( "v-104cn.u11", 0x000000, 0x200000, CRC(847cee20) SHA1(a258366421418c9734df97ece4cf8536038b4cd4) )
+
+	ROM_REGION( 0x800000, "tt5665", 0 ) // samples
+	ROM_LOAD( "v105cn_u19.u19", 0x000000, 0x800000, CRC(f7990ed4) SHA1(e8a72bc0926911ba5c079b02dd324ac060e8c768) ) // same as lhfy
+
+	ROM_REGION( 0x10000000, "gfx", ROMREGION_ERASE00 )
+	// 4x 64MB flash ROMs (U1, U2, U3, U4) mounted onto a custom SODIMM at CN1 with a sticker "CG V105CN"
+	ROM_LOAD( "cg_v105cn.u1", 0x0000000, 0x4000000, BAD_DUMP CRC(6abd4a31) SHA1(6c5eefc3671c4192a689cb1e82605e65fec44384) ) // wouldn't read, taken from lhfy
+	ROM_LOAD( "cg_v105cn.u2", 0x4000000, 0x4000000, CRC(4029df1a) SHA1(82baca3dc306cefc72c94adb4b4105bb54b557ee) )
+	ROM_LOAD( "cg_v105cn.u3", 0x8000000, 0x4000000, BAD_DUMP CRC(b379503c) SHA1(fc7d5c4afcef6a7448cc6547fa73e51378a67b3d) ) // wouldn't read, taken from lhfy
+	ROM_LOAD( "cg_v105cn.u4", 0xc000000, 0x4000000, CRC(f96be9f1) SHA1(fe957af2e31007b570c4f4b707400a87be1b4301) )
 ROM_END
 
 
@@ -1866,7 +1862,7 @@ ROM_END
 ROM_START( cjjl )
 	ROM_REGION( 0x04000, "maincpu", 0 )
 	// Internal ROM of IGS036 ARM based MCU
-	ROM_LOAD( "igs036.u16", 0x00000, 0x4000, NO_DUMP )
+	ROM_LOAD( "cjjl_igs036.u16", 0x00000, 0x4000, CRC(3176e2e7) SHA1(8f94ef22158a03cbfaf65d8cf949354328842d0a) )
 
 	ROM_REGION32_LE( 0x200000, "user1", 0 ) // external ARM data / prg
 	ROM_LOAD( "system_v100cn.u18", 0x000000, 0x200000, CRC(cca9f4c0) SHA1(4df69657804b6da4508958a7d1b40089669e4a5a) )
@@ -2129,6 +2125,12 @@ void m036_base_state::init_jxry()
 
 // sets with OKI6295 for sound, 512x240 resolution
 
+GAME( 200?, cjdh2,        0,       m036_oki_2mhz, jxry,     m036_oki_state,      empty_init,      ROT0, "IGS",           "Chao Ji Da Heng 2 (S311CN)", MACHINE_IMPERFECT_GRAPHICS | MACHINE_NOT_WORKING ) // GFX ROMs don't seem correct for this set, probably cjdh2d is the correct set
+GAME( 200?, cjdh2a,       cjdh2,   m036_oki_2mhz, jxry,     m036_oki_state,      empty_init,      ROT0, "IGS",           "Chao Ji Da Heng 2 (S311CNA)", MACHINE_NOT_WORKING )
+GAME( 200?, cjdh2b,       cjdh2,   m036_oki_2mhz, jxry,     m036_oki_state,      empty_init,      ROT0, "IGS",           "Chao Ji Da Heng 2 (S311CNB)", MACHINE_IMPERFECT_GRAPHICS | MACHINE_NOT_WORKING ) // GFX ROMs don't seem correct for this set
+GAME( 200?, cjdh2c,       cjdh2,   m036_oki_2mhz, jxry,     m036_oki_state,      empty_init,      ROT0, "IGS",           "Chao Ji Da Heng 2 (S215CN)", MACHINE_NOT_WORKING )
+GAME( 200?, cjdh2d,       cjdh2,   m036_oki_2mhz, jxry,     m036_oki_state,      empty_init,      ROT0, "IGS",           "Chao Ji Da Heng 2 (S311CN, alternate GFX ROMs)", MACHINE_NOT_WORKING )
+
 GAME( 200?, jhzb,         0,       m036_oki_2mhz, jhzb,     m036_oki_state,      empty_init,      ROT0, "IGS",           "Jin Hua Zhengba (V113CN)", MACHINE_NOT_WORKING )
 
 GAME( 200?, jxry,         0,       m036_oki_2mhz, jxry,     m036_oki_state,      init_jxry,       ROT0, "IGS",           "Jixiang Ruyi (V116CN)", MACHINE_NOT_WORKING )
@@ -2165,9 +2167,16 @@ GAME( 200?, xydn,         0,       m036_cjgdy,    cjgdy,    m036_tt_state,      
 
 GAME( 2010, mjzhizun,     0,       m036_mjzhizun, lhtb,     m036_mj_state,       empty_init,      ROT0, "IGS",           "Majiang Zhizun (S100CN)", MACHINE_NOT_WORKING )
 
+GAME( 200?, cjjl,         0,       m036_tt_boot,  cjgdy,    m036_tt_state,       empty_init,      ROT0, "IGS",           "Chaoji Jielong (V100CN)", MACHINE_NOT_WORKING )
+
+GAME( 2010, lhzb3in1,     0,       m036_tt_boot,  lhtb,     m036_tt_state,       empty_init,      ROT0, "IGS",           "Long Hu Zhengba San He Yi (V100CN)", MACHINE_NOT_WORKING ) // 龙虎争霸三合一
+
 // sets with a TT5665 for sound and 800x600 display
 
 GAME( 2010, lhfy,         0,       m036_hd,       lhfy,     m036_hd_state,       empty_init,      ROT0, "IGS",           "Long Hu Feng Yun Gao Qing Ban (V206CN)", MACHINE_NOT_WORKING )
+
+GAME( 2010, lhzbgqb,      0,       m036_hd,       lhfy,     m036_hd_state,       empty_init,      ROT0, "IGS",           "Long Hu Zhengba Gao Qing Ban (V105CN)", MACHINE_NOT_WORKING )
+GAME( 2010, lhzbgqb104cn, lhzbgqb, m036_hd,       lhfy,     m036_hd_state,       empty_init,      ROT0, "IGS",           "Long Hu Zhengba Gao Qing Ban (V104CN)", MACHINE_NOT_WORKING )
 
 GAME( 2010, hlddz,        0,       m036_hd,       ddz_hd,   m036_hd_state,       empty_init,      ROT0, "IGS",           "Huanle Dou Dizhu (V104CN)", MACHINE_NOT_WORKING )
 
@@ -2181,21 +2190,9 @@ GAME( 201?, hlqqq,        0,       m036_hd,       ddz_hd,   m036_hd_state,      
 
 // sets with no IGS036 ROM dump
 
-GAME( 200?, cjdh2,        0,       m036,    m036, m036_state, init_key<cjdh2_key>,    ROT0, "IGS",           "Chao Ji Da Heng 2 (V311CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
-GAME( 200?, cjdh2a,       cjdh2,   m036,    m036, m036_state, init_key<cjdh2_key>,    ROT0, "IGS",           "Chao Ji Da Heng 2 (V311CNA)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
-GAME( 200?, cjdh2b,       cjdh2,   m036,    m036, m036_state, init_key<cjdh2_key>,    ROT0, "IGS",           "Chao Ji Da Heng 2 (V311CNB)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
-GAME( 200?, cjdh2c,       cjdh2,   m036,    m036, m036_state, init_key<cjdh2_key>,    ROT0, "IGS",           "Chao Ji Da Heng 2 (V215CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
-GAME( 200?, cjdh2d,       cjdh2,   m036,    m036, m036_state, init_key<cjdh2_key>,    ROT0, "IGS",           "Chao Ji Da Heng 2 (V311CN, alternate GFX ROMs)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
-
 GAME( 200?, super70s,     0,       m036_tt, m036, m036_state, init_m036,          ROT0, "IGS",           "Super 70's (V100US)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
 
-GAME( 2010, lhzb3in1,     0,       m036_tt, m036, m036_state, init_key<lhzb3in1_key>, ROT0, "IGS",           "Long Hu Zhengba San He Yi (V100CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING ) // 龙虎争霸三合一
-
 GAME( 200?, igsm312,      0,       m036_tt, m036, m036_state, init_key<m312cn_key>,   ROT0, "IGS",           "unknown 'IGS 6POKER2' game (V312CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING ) // there's very little code and no gfx ROMs, might be a 'set/clear' chip for a gambling game.
-
-GAME( 200?, cjjl,         0,       m036_tt, m036, m036_state, init_key<cjjl_key>,     ROT0, "IGS",           "Chaoji Jielong (V100CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
-
-GAME( 2010, lhzbgqb,      0,       m036_tt, m036, m036_state, init_key<lhzbgqb_key>,  ROT0, "IGS",           "Long Hu Zhengba Gao Qing Ban (V105CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
 
 GAME( 201?, xcjnh,        0,       m036_tt, m036, m036_state, init_key<xcjnh_key>,    ROT0, "IGS",           "Xiaochou Jianianhua (S100CN)", MACHINE_NO_SOUND | MACHINE_NOT_WORKING )
 

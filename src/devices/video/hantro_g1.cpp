@@ -8,7 +8,7 @@
 
 #include "multibyte.h"
 
-#include "openh264/codec/api/wels/codec_api.h"
+//#include "openh264/codec/api/wels/codec_api.h"
 
 #include <algorithm>
 #include <memory>
@@ -147,6 +147,7 @@ hantro_g1_device::hantro_g1_device(machine_config const &mconfig, char const *ta
 
 void hantro_g1_device::device_start()
 {
+	m_openh264 = util::openh264::decoder_api::initialize();
 	m_dma->cache(m_dma_access);
 	m_irq_state = false;
 	m_irq(0);
@@ -181,7 +182,7 @@ void hantro_g1_device::release_decoder()
 	if (m_decoder)
 	{
 		m_decoder->Uninitialize();
-		WelsDestroyDecoder(m_decoder);
+		m_openh264->destroy_decoder(m_decoder);
 		m_decoder = nullptr;
 	}
 }
@@ -189,11 +190,16 @@ void hantro_g1_device::release_decoder()
 bool hantro_g1_device::reset_decoder()
 {
 	release_decoder();
-	if (WelsCreateDecoder(&m_decoder))
+	if (m_openh264->create_decoder(&m_decoder))
 		return false;
-	SDecodingParam params{};
-	params.sVideoProperty.eVideoBsType = VIDEO_BITSTREAM_AVC;
-	params.eEcActiveIdc = ERROR_CON_DISABLE;
+	// A single worker completes each job synchronously and allows FlushFrame
+	// to release the picture buffer back to the decoder.
+	int threads = 1;
+	if (m_decoder->SetOption(util::openh264::DECODER_OPTION_NUM_OF_THREADS, &threads))
+		return false;
+	util::openh264::SDecodingParam params{};
+	params.sVideoProperty.eVideoBsType = util::openh264::VIDEO_BITSTREAM_AVC;
+	params.eEcActiveIdc = util::openh264::ERROR_CON_DISABLE;
 	return !m_decoder->Initialize(&params);
 }
 
@@ -201,8 +207,12 @@ bool hantro_g1_device::decode_packet(u8 const *data, u32 size, u8 **planes, u32 
 {
 	if (!m_decoder)
 		return false;
-	SBufferInfo info{};
-	auto const result = m_decoder->DecodeFrameNoDelay(data, size, planes, &info);
+	util::openh264::SBufferInfo info{};
+	auto result = m_decoder->DecodeFrameNoDelay(data, size, planes, &info);
+	// The guest reorders pictures for display.  Return this job's picture
+	// before the next job can put another picture in OpenH264's output queue.
+	if (!result && !info.iBufferStatus)
+		result = m_decoder->FlushFrame(planes, &info);
 	if (result || info.iBufferStatus != 1)
 	{
 		logerror("H.264 decode error=%x picture=%d\n", u32(result), info.iBufferStatus);
